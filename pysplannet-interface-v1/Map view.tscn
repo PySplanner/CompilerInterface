@@ -1,0 +1,100 @@
+[gd_scene load_steps=8 format=3 uid="uid://v0tngypwklwl"]
+
+[ext_resource type="Script" uid="uid://lmgwqnji7wqa" path="res://map_view.gd" id="1_7llvf"]
+[ext_resource type="Script" uid="uid://l0ttsovrnqln" path="res://code_preview.gd" id="1_on2s6"]
+[ext_resource type="Script" uid="uid://dr4j5322rn72y" path="res://CameraControll.gd" id="1_soy1o"]
+[ext_resource type="Texture2D" uid="uid://bqnhx1vx66ft6" path="res://FLL Submerged imagem.webp" id="2_o5hwu"]
+[ext_resource type="Script" uid="uid://b8ivtppjxinvd" path="res://pathDrawerV1.gd" id="3_o5hwu"]
+[ext_resource type="Script" uid="uid://c87l7hmr30at8" path="res://path_manager.gd" id="4_w5j0i"]
+[ext_resource type="Script" uid="uid://d1012wo1r8jx2" path="res://tools.gd" id="5_g2q0j"]
+
+[node name="Map editor" type="Node2D"]
+
+[node name="Map View UI" type="CanvasLayer" parent="."]
+
+[node name="Main" type="Control" parent="Map View UI"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="Code preview" type="TextEdit" parent="Map View UI/Main"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.00867303
+anchor_top = 1.3871
+anchor_right = 0.00867303
+anchor_bottom = 1.3871
+offset_left = 55.6531
+offset_top = 101.516
+offset_right = 262.653
+offset_bottom = 696.516
+metadata/_edit_use_anchors_ = true
+
+[node name="HSplitContainer" type="HSplitContainer" parent="Map View UI/Main"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+split_offset = 270
+drag_area_highlight_in_editor = true
+
+[node name="GridContainer" type="GridContainer" parent="Map View UI/Main/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+metadata/_edit_use_anchors_ = true
+
+[node name="Editor mode selector" type="TabBar" parent="Map View UI/Main/HSplitContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+current_tab = 0
+tab_count = 4
+tab_0/title = "Map view"
+tab_1/title = "Code view"
+tab_2/title = "Viewport robot display"
+tab_3/title = "Library editor"
+metadata/_edit_use_anchors_ = true
+
+[node name="Control" type="Control" parent="Map View UI/Main/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TextEdit" type="TextEdit" parent="Map View UI/Main/HSplitContainer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Heyyy! That may work!"
+editable = false
+script = ExtResource("1_on2s6")
+
+[node name="robotCommand" type="Node" parent="."]
+
+[node name="map_view" type="Node" parent="."]
+script = ExtResource("1_7llvf")
+
+[node name="MapViewCamera" type="Camera2D" parent="map_view"]
+script = ExtResource("1_soy1o")
+
+[node name="Map" type="Sprite2D" parent="map_view"]
+texture = ExtResource("2_o5hwu")
+
+[node name="Path drawer" type="Node2D" parent="map_view"]
+script = ExtResource("3_o5hwu")
+
+[node name="OptionButton" type="OptionButton" parent="map_view"]
+offset_right = 32.0
+offset_bottom = 20.0
+
+[node name="PathManager" type="Node" parent="map_view"]
+script = ExtResource("4_w5j0i")
+
+[node name="tools" type="Node" parent="map_view"]
+script = ExtResource("5_g2q0j")
