@@ -2,7 +2,11 @@ extends TextEdit
 
 @onready var PathManager = $"../../../../map_view/PathManager"
 
-var was_inside := false  # Track if we were inside last frame
+var was_inside = false  # Track if we were inside so it does not update every single frame :3
+var is_editing = false
+
+func is_editting() -> bool:
+	return is_editing
 
 func _process(delta):
 	var local_mouse = get_local_mouse_position()
@@ -11,19 +15,22 @@ func _process(delta):
 	# When entering: make editable
 	if is_inside and not was_inside:
 		editable = true
+		is_editing = true
 
 	# When exiting: apply text and lock
 	if not is_inside and was_inside:
 		editable = false
-		apply_edited_commands()
+		parse_edited_commands()
+		is_editing = false
 	
 	if not is_inside:
 		refresh_command_list()
+		
 
 	# Update for next frame
 	was_inside = is_inside
 
-# Refresh the list when we lose focus (or manually)
+# generate code preview
 func refresh_command_list():
 	var newText := ""
 
@@ -32,8 +39,8 @@ func refresh_command_list():
 
 	text = newText
 
-# Apply changes: parse text and rebuild command list
-func apply_edited_commands():
+# Apply changes: parse text and rebuild command list!
+func parse_edited_commands():
 	PathManager.commands.clear()
 
 	for line in text.split("\n", false):
@@ -49,6 +56,3 @@ func apply_edited_commands():
 			cmd = robotCommand.new("//comentary", cleaned)
 
 		PathManager.add_command(cmd)
-
-	# Optional: refresh to reformat after apply
-	refresh_command_list()
