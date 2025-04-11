@@ -21,8 +21,11 @@ func _init(command := "", a1 := "", a2 := "", a3 := "", a4 := "", a5 := "", a6 :
 	self.attribute6 = a6
 	self.attribute7 = a7
 
-# Returns: command(attribute1, attribute2, ...)
+# Convert command to display text (including special case for comments)
 func get_text() -> String:
+	if command.begins_with("//"):
+		return "// " + attribute1.strip_edges()
+
 	var attributes = [
 		attribute1, attribute2, attribute3, attribute4,
 		attribute5, attribute6, attribute7
@@ -34,8 +37,16 @@ func get_text() -> String:
 
 	return "%s(%s)" % [command, ", ".join(non_empty)]
 
-# Parses a string like "curve(90, 10)" and returns a new robotCommand
+# Parse from a string like "curve(90, 10)" or "// something"
 static func from_text(text: String) -> robotCommand:
+	var line = text.strip_edges()
+
+	# Handle comments starting with //
+	if line.begins_with("//"):
+		var comment_text = line.substr(2).strip_edges()
+		return robotCommand.new("//commentary", comment_text)
+
+	# Match function-style commands: command(arg1, arg2, ...)
 	var pattern = r"^(\w+)\((.*?)\)$"
 	var regex = RegEx.new()
 	var result = regex.compile(pattern)
@@ -43,9 +54,9 @@ static func from_text(text: String) -> robotCommand:
 		push_error("Invalid regex!")
 		return robotCommand.new()
 
-	var match = regex.search(text.strip_edges())
+	var match = regex.search(line)
 	if not match:
-		push_error("Invalid command format: " + text)
+		# Not a valid command format
 		return robotCommand.new()
 
 	var cmd_name = match.get_string(1)
