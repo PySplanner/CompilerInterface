@@ -1,7 +1,7 @@
 extends Container
 
-@onready var target = $"../../../../map_view/tools"
-@onready var inputHandler = $"../../../../custom_input_handler"
+@onready var target = %tools
+@onready var inputHandler = %custom_input_handler
 
 func _ready():
 	inputHandler.connect("custom_mouse_input", Callable(self, "_custom_mouse_input"))

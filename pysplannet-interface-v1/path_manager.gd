@@ -1,14 +1,39 @@
 extends Node
 class_name CommandManager
 
+
+
 # Stores all robot commands
 var commands: Array[robotCommand] = []
 
 # Starting direction (in degrees)
 var startingDirection: float = 90.0
 
-# Starting position (2D vector)
-var startingPosition: Vector2 = Vector2.ZERO
+# Generate full command list as text
+func get_command_text() -> String:
+	var result := ""
+	for cmd in get_all_commands():
+		result += cmd.get_text() + "\n"
+	return result
+
+func clear():
+	commands.clear()
+
+# Parse full command text and replace command list
+func parse_command_text(text: String) -> void:
+	commands.clear()
+
+	for line in text.split("\n", false):
+		var cleaned = line.strip_edges()
+		if cleaned == "":
+			continue
+
+		var cmd = robotCommand.from_text(cleaned)
+		if cmd.command == "":
+			cmd = robotCommand.new("//commentary", cleaned)
+
+		add_command(cmd)
+
 
 # Add a command to the queue
 func add_command(cmd: robotCommand) -> void:
@@ -20,23 +45,20 @@ func get_all_commands() -> Array[robotCommand]:
 
 # Get only the path-related commands (straight lines and curves)
 func get_path_commands() -> Array[robotCommand]:
-	return commands.filter(func(cmd): return cmd.command == "straight_line" or cmd.command == "curve")
+	return commands.filter(func(cmd): return cmd.command == "straight_line" or cmd.command == "curve"or cmd.command == "set_pos")
 
 # Get the initial direction
 func get_starting_direction() -> float:
-	return startingDirection
+	return 0
 
 # Get the initial position
 func get_starting_position() -> Vector2:
-	return startingPosition
+	return Vector2.DOWN
 
 # Set the starting position
-func set_starting_position(pos: Vector2) -> void:
-	startingPosition = pos
+func set_pos(pos: Vector2, angle: float) -> void:
+	add_command(robotCommand.new("set_pos",str(round_to_decimals(pos.x,2)),str(round_to_decimals(pos.y,2)),str(angle), "", "", ""))
 
-# Set the starting direction
-func set_starting_direction(dir: float) -> void:
-	startingDirection = dir
 
 # Create and add a straight line command
 func add_straight_line(distance: float, speed: float, smoothing: float) -> void:
@@ -70,10 +92,13 @@ func get_path_point_coordinate(index: int) -> Vector2:
 			pos += Vector2.from_angle(deg_to_rad(angle)) * cmd.attribute1.to_float() * sign(cmd.attribute2.to_float())
 		elif cmd.command == "curve":
 			angle += cmd.attribute1.to_float()
+		elif cmd.command == "set_pos":
+			pos = Vector2(cmd.attribute1.to_float(),cmd.attribute2.to_float())
+			angle = cmd.attribute3.to_float()
 
 		i += 1
 
-	return Vector2.ZERO
+	return pos
 
 # Get the direction (angle) at a specific path point index
 func get_path_point_direction(index: int) -> float:
@@ -86,34 +111,19 @@ func get_path_point_direction(index: int) -> float:
 			return angle
 		if cmd.command == "curve":
 			angle += cmd.attribute1.to_float()
+		elif cmd.command == "set_pos":
+			angle = cmd.attribute3.to_float()
 		i += 1
 
-	return startingDirection
+	return angle
 
 # Get the final coordinate at the end of the path
 func get_last_path_point_coordinate() -> Vector2:
-	var angle = get_starting_direction()
-	var pos = get_starting_position()
-	var pathCommands = get_path_commands()
-
-	for cmd in pathCommands:
-		if cmd.command == "straight_line":
-			pos += Vector2.from_angle(deg_to_rad(angle)) * cmd.attribute1.to_float() * sign(cmd.attribute2.to_float())
-		elif cmd.command == "curve":
-			angle += cmd.attribute1.to_float()
-
-	return pos
+	return get_path_point_coordinate(commands.size())
 
 # Get the final direction at the end of the path
 func get_last_path_point_direction() -> float:
-	var angle = get_starting_direction()
-	var pathCommands = get_path_commands()
-
-	for cmd in pathCommands:
-		if cmd.command == "curve":
-			angle += cmd.attribute1.to_float()
-
-	return angle
+	return get_path_point_direction(commands.size())
 
 # Add a point to the path, computing the needed curve + line
 func add_point(point: Vector2) -> void:
@@ -123,5 +133,9 @@ func add_point(point: Vector2) -> void:
 	var direction_to_point = (point - lastPos).angle()
 	var delta_angle = rad_to_deg(direction_to_point - deg_to_rad(lastDir))
 
-	add_curve(delta_angle, 10)
-	add_straight_line(lastPos.distance_to(point), 40, 1)
+	add_curve(round_to_decimals(delta_angle,3), 10)
+	add_straight_line(round_to_decimals(lastPos.distance_to(point),2), 40, 1)
+
+func round_to_decimals(value: float, decimals: int) -> float:
+	var factor = pow(10.0, decimals)
+	return round(value * factor) / factor

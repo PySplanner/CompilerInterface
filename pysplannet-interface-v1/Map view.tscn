@@ -1,43 +1,41 @@
-[gd_scene load_steps=11 format=3 uid="uid://v0tngypwklwl"]
+[gd_scene load_steps=17 format=3 uid="uid://v0tngypwklwl"]
 
 [ext_resource type="Script" uid="uid://lmgwqnji7wqa" path="res://map_view.gd" id="1_7llvf"]
 [ext_resource type="Script" uid="uid://l0ttsovrnqln" path="res://code_preview.gd" id="1_on2s6"]
 [ext_resource type="Script" uid="uid://dr4j5322rn72y" path="res://CameraControll.gd" id="1_soy1o"]
+[ext_resource type="Script" uid="uid://plf8q8s36pmg" path="res://files_dropdown.gd" id="2_fxs42"]
 [ext_resource type="Texture2D" uid="uid://bqnhx1vx66ft6" path="res://FLL Submerged imagem.webp" id="2_o5hwu"]
 [ext_resource type="Script" uid="uid://csghwq5124kks" path="res://map_open_part.gd" id="2_on2s6"]
 [ext_resource type="Script" uid="uid://d0d1rwjxx5434" path="res://mark_control_as_handled.gd" id="2_s3n85"]
+[ext_resource type="Script" uid="uid://br3wcm71eonlk" path="res://config_panel.gd" id="3_at45q"]
+[ext_resource type="Script" uid="uid://dxwpyj2kcljsw" path="res://edit_dropdown.gd" id="3_e3uvq"]
+[ext_resource type="Script" uid="uid://b1cqhlphr0nv4" path="res://tool_selector_script.gd" id="3_hwmuo"]
 [ext_resource type="Script" uid="uid://b8ivtppjxinvd" path="res://pathDrawerV1.gd" id="3_o5hwu"]
 [ext_resource type="Script" uid="uid://c87l7hmr30at8" path="res://path_manager.gd" id="4_w5j0i"]
 [ext_resource type="Script" uid="uid://d1012wo1r8jx2" path="res://tools.gd" id="5_g2q0j"]
 [ext_resource type="Script" uid="uid://bcjqugw1hi8oi" path="res://custom_input_handler.gd" id="10_m2qfh"]
+[ext_resource type="Script" uid="uid://iypvex34xoi3" path="res://save_manager.gd" id="12_r3jd1"]
+
+[sub_resource type="Theme" id="Theme_at45q"]
 
 [node name="Map editor" type="Node2D"]
 
 [node name="Map View UI" type="CanvasLayer" parent="."]
 
-[node name="HSplitContainer" type="HSplitContainer" parent="Map View UI"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Map View UI"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-split_offset = 865
-drag_area_highlight_in_editor = true
 
-[node name="map open part" type="Control" parent="Map View UI/HSplitContainer"]
+[node name="top_bar" type="Panel" parent="Map View UI/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-mouse_filter = 1
+theme = SubResource("Theme_at45q")
+script = ExtResource("2_s3n85")
 
-[node name="Container" type="Container" parent="Map View UI/HSplitContainer/map open part"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("2_on2s6")
-
-[node name="grid" type="GridContainer" parent="Map View UI/HSplitContainer/map open part"]
+[node name="top_bar_row" type="HBoxContainer" parent="Map View UI/VBoxContainer/top_bar"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -45,8 +43,29 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
+script = ExtResource("2_s3n85")
 
-[node name="Editor mode selector" type="TabBar" parent="Map View UI/HSplitContainer/map open part/grid"]
+[node name="files" type="MenuButton" parent="Map View UI/VBoxContainer/top_bar/top_bar_row"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "file"
+script = ExtResource("2_fxs42")
+
+[node name="edit" type="MenuButton" parent="Map View UI/VBoxContainer/top_bar/top_bar_row"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "edit
+"
+script = ExtResource("3_e3uvq")
+
+[node name="config_panel" type="Button" parent="Map View UI/VBoxContainer/top_bar/top_bar_row"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+script = ExtResource("3_at45q")
+
+[node name="Editor mode selector" type="TabBar" parent="Map View UI/VBoxContainer/top_bar/top_bar_row"]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 1
@@ -56,15 +75,63 @@ tab_0/title = "Map view"
 tab_1/title = "Code view"
 tab_2/title = "Viewport robot display"
 tab_3/title = "Library editor"
-script = ExtResource("2_s3n85")
 metadata/_edit_use_anchors_ = true
 
-[node name="text preview" type="Control" parent="Map View UI/HSplitContainer"]
+[node name="text-graphic_code_split" type="HSplitContainer" parent="Map View UI/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+split_offset = 940
+drag_area_highlight_in_editor = true
+
+[node name="map open part" type="Control" parent="Map View UI/VBoxContainer/text-graphic_code_split"]
+layout_mode = 2
+mouse_filter = 1
+
+[node name="Container" type="Container" parent="Map View UI/VBoxContainer/text-graphic_code_split/map open part"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_on2s6")
+
+[node name="grid" type="GridContainer" parent="Map View UI/VBoxContainer/text-graphic_code_split/map open part"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+
+[node name="sidebar" type="VBoxContainer" parent="Map View UI/VBoxContainer/text-graphic_code_split/map open part/grid"]
+custom_minimum_size = Vector2(44.075, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 6
+
+[node name="add_points" type="Button" parent="Map View UI/VBoxContainer/text-graphic_code_split/map open part/grid/sidebar"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+script = ExtResource("3_hwmuo")
+
+[node name="other" type="Button" parent="Map View UI/VBoxContainer/text-graphic_code_split/map open part/grid/sidebar"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+script = ExtResource("3_hwmuo")
+
+[node name="text preview" type="Control" parent="Map View UI/VBoxContainer/text-graphic_code_split"]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 
-[node name="code_preview" type="TextEdit" parent="Map View UI/HSplitContainer/text preview"]
+[node name="code_preview" type="TextEdit" parent="Map View UI/VBoxContainer/text-graphic_code_split/text preview"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -75,25 +142,40 @@ mouse_filter = 1
 text = "Heyyy! That may work!"
 script = ExtResource("1_on2s6")
 
-[node name="robotCommand" type="Node" parent="."]
-
 [node name="map_view" type="Node" parent="."]
+unique_name_in_owner = true
 script = ExtResource("1_7llvf")
 
 [node name="MapViewCamera" type="Camera2D" parent="map_view"]
+unique_name_in_owner = true
 script = ExtResource("1_soy1o")
 
 [node name="Map" type="Sprite2D" parent="map_view"]
 texture = ExtResource("2_o5hwu")
 
 [node name="Path drawer" type="Node2D" parent="map_view"]
+unique_name_in_owner = true
 script = ExtResource("3_o5hwu")
 
-[node name="PathManager" type="Node" parent="map_view"]
-script = ExtResource("4_w5j0i")
-
 [node name="tools" type="Node" parent="map_view"]
+unique_name_in_owner = true
 script = ExtResource("5_g2q0j")
 
-[node name="custom_input_handler" type="Node" parent="."]
+[node name="utils" type="Node" parent="."]
+
+[node name="custom_input_handler" type="Node" parent="utils"]
+unique_name_in_owner = true
 script = ExtResource("10_m2qfh")
+
+[node name="robot_command_class" type="Node" parent="utils"]
+
+[node name="save_manager" type="Node" parent="utils"]
+unique_name_in_owner = true
+script = ExtResource("12_r3jd1")
+
+[node name="FileDialog" type="FileDialog" parent="utils/save_manager"]
+access = 2
+
+[node name="PathManager" type="Node" parent="utils"]
+unique_name_in_owner = true
+script = ExtResource("4_w5j0i")

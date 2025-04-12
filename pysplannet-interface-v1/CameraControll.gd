@@ -2,7 +2,9 @@ extends Camera2D
 
 @export var speed: float = 400.0
 @export var zoom_speed: float = 0.3
-@onready var hybrid_text_coding = $"../../Map View UI/HSplitContainer/text preview/code_preview"
+@onready var hybrid_text_coding = %code_preview
+
+
 var transformed_zoom: float = 1.0
 var dragging := false
 var last_mouse_pos := Vector2.ZERO
@@ -84,3 +86,6 @@ func _input(event):
 		dragging = event.pressed
 		if dragging:
 			last_mouse_pos = get_viewport().get_mouse_position()
+
+func get_zoom_as_float() -> float:
+	return zoom.x
