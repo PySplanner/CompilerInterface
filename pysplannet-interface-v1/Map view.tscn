@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://v0tngypwklwl"]
+[gd_scene load_steps=19 format=3 uid="uid://v0tngypwklwl"]
 
 [ext_resource type="Script" uid="uid://lmgwqnji7wqa" path="res://map_view.gd" id="1_7llvf"]
 [ext_resource type="Script" uid="uid://l0ttsovrnqln" path="res://code_preview.gd" id="1_on2s6"]
@@ -7,14 +7,16 @@
 [ext_resource type="Texture2D" uid="uid://bqnhx1vx66ft6" path="res://FLL Submerged imagem.webp" id="2_o5hwu"]
 [ext_resource type="Script" uid="uid://csghwq5124kks" path="res://map_open_part.gd" id="2_on2s6"]
 [ext_resource type="Script" uid="uid://d0d1rwjxx5434" path="res://mark_control_as_handled.gd" id="2_s3n85"]
-[ext_resource type="Script" uid="uid://br3wcm71eonlk" path="res://config_panel.gd" id="3_at45q"]
 [ext_resource type="Script" uid="uid://dxwpyj2kcljsw" path="res://edit_dropdown.gd" id="3_e3uvq"]
 [ext_resource type="Script" uid="uid://b1cqhlphr0nv4" path="res://tool_selector_script.gd" id="3_hwmuo"]
 [ext_resource type="Script" uid="uid://b8ivtppjxinvd" path="res://pathDrawerV1.gd" id="3_o5hwu"]
 [ext_resource type="Script" uid="uid://c87l7hmr30at8" path="res://path_manager.gd" id="4_w5j0i"]
 [ext_resource type="Script" uid="uid://d1012wo1r8jx2" path="res://tools.gd" id="5_g2q0j"]
+[ext_resource type="Texture2D" uid="uid://0w1172hayvjg" path="res://add_point.svg" id="6_5l10w"]
+[ext_resource type="Texture2D" uid="uid://jowi3vmh0y5b" path="res://move_point.svg" id="8_lo0x5"]
 [ext_resource type="Script" uid="uid://bcjqugw1hi8oi" path="res://custom_input_handler.gd" id="10_m2qfh"]
 [ext_resource type="Script" uid="uid://iypvex34xoi3" path="res://save_manager.gd" id="12_r3jd1"]
+[ext_resource type="Script" uid="uid://dw1fhmyvxpjyd" path="res://map_scale.gd" id="13_5l10w"]
 
 [sub_resource type="Theme" id="Theme_at45q"]
 
@@ -58,13 +60,6 @@ text = "edit
 "
 script = ExtResource("3_e3uvq")
 
-[node name="config_panel" type="Button" parent="Map View UI/VBoxContainer/top_bar/top_bar_row"]
-custom_minimum_size = Vector2(40, 40)
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 4
-script = ExtResource("3_at45q")
-
 [node name="Editor mode selector" type="TabBar" parent="Map View UI/VBoxContainer/top_bar/top_bar_row"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -106,23 +101,41 @@ grow_vertical = 2
 size_flags_horizontal = 3
 
 [node name="sidebar" type="VBoxContainer" parent="Map View UI/VBoxContainer/text-graphic_code_split/map open part/grid"]
-custom_minimum_size = Vector2(44.075, 0)
+custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 6
 
 [node name="add_points" type="Button" parent="Map View UI/VBoxContainer/text-graphic_code_split/map open part/grid/sidebar"]
-custom_minimum_size = Vector2(40, 40)
+custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
+icon = ExtResource("6_5l10w")
+expand_icon = true
 script = ExtResource("3_hwmuo")
 
-[node name="other" type="Button" parent="Map View UI/VBoxContainer/text-graphic_code_split/map open part/grid/sidebar"]
-custom_minimum_size = Vector2(40, 40)
+[node name="move_points" type="Button" parent="Map View UI/VBoxContainer/text-graphic_code_split/map open part/grid/sidebar"]
+custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
+icon = ExtResource("8_lo0x5")
+expand_icon = true
+script = ExtResource("3_hwmuo")
+
+[node name="divisor" type="ColorRect" parent="Map View UI/VBoxContainer/text-graphic_code_split/map open part/grid/sidebar"]
+custom_minimum_size = Vector2(0, 3)
+layout_mode = 2
+color = Color(0.473976, 0.473976, 0.473976, 1)
+
+[node name="other2" type="Button" parent="Map View UI/VBoxContainer/text-graphic_code_split/map open part/grid/sidebar"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+icon = ExtResource("8_lo0x5")
+expand_icon = true
 script = ExtResource("3_hwmuo")
 
 [node name="text preview" type="Control" parent="Map View UI/VBoxContainer/text-graphic_code_split"]
@@ -157,9 +170,9 @@ texture = ExtResource("2_o5hwu")
 unique_name_in_owner = true
 script = ExtResource("3_o5hwu")
 
-[node name="tools" type="Node" parent="map_view"]
+[node name="mapScale" type="Node2D" parent="map_view"]
 unique_name_in_owner = true
-script = ExtResource("5_g2q0j")
+script = ExtResource("13_5l10w")
 
 [node name="utils" type="Node" parent="."]
 
@@ -179,3 +192,7 @@ access = 2
 [node name="PathManager" type="Node" parent="utils"]
 unique_name_in_owner = true
 script = ExtResource("4_w5j0i")
+
+[node name="tools" type="Node" parent="utils"]
+unique_name_in_owner = true
+script = ExtResource("5_g2q0j")

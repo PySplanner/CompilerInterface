@@ -47,6 +47,10 @@ func get_all_commands() -> Array[robotCommand]:
 func get_path_commands() -> Array[robotCommand]:
 	return commands.filter(func(cmd): return cmd.command == "straight_line" or cmd.command == "curve"or cmd.command == "set_pos")
 
+# Get only the path-related commands (straight lines and curves)
+func get_path_line_commands() -> Array[robotCommand]:
+	return commands.filter(func(cmd): return cmd.command == "straight_line" or cmd.command == "set_pos")
+
 # Get the initial direction
 func get_starting_direction() -> float:
 	return 0
@@ -100,6 +104,31 @@ func get_path_point_coordinate(index: int) -> Vector2:
 
 	return pos
 
+# Get the coordinate at a specific path point index
+func get_path_distinct_point_coordinate(index: int) -> Vector2:
+	var angle = get_starting_direction()
+	var pos = get_starting_position()
+	var pathCommands = get_path_commands()
+	var i = 0
+	var curves = 0;
+
+	for cmd in pathCommands:
+		if i - curves == index:
+			return pos
+
+		if cmd.command == "straight_line":
+			pos += Vector2.from_angle(deg_to_rad(angle)) * cmd.attribute1.to_float() * sign(cmd.attribute2.to_float())
+		elif cmd.command == "curve":
+			curves += 1
+			angle += cmd.attribute1.to_float()
+		elif cmd.command == "set_pos":
+			pos = Vector2(cmd.attribute1.to_float(),cmd.attribute2.to_float())
+			angle = cmd.attribute3.to_float()
+
+		i += 1
+
+	return pos
+
 # Get the direction (angle) at a specific path point index
 func get_path_point_direction(index: int) -> float:
 	var angle = get_starting_direction()
@@ -139,3 +168,27 @@ func add_point(point: Vector2) -> void:
 func round_to_decimals(value: float, decimals: int) -> float:
 	var factor = pow(10.0, decimals)
 	return round(value * factor) / factor
+
+# Get the index of the path point closest to the input coordinate if within a given threshold distance
+func get_intersecting_point(input_point: Vector2, threshold_distance: float) -> int:
+	var path_commands = get_path_line_commands()
+	var closest_index = -1
+	var min_distance = threshold_distance
+
+	for i in range(path_commands.size()+1):
+		var current_point = get_path_distinct_point_coordinate(i)
+		var distance_to_point = input_point.distance_to(current_point)
+
+		if distance_to_point < min_distance:
+			min_distance = distance_to_point
+			closest_index = i
+
+	return closest_index
+
+func move_path_point(index: int, new_pos:Vector2):
+	var last_point = get_path_point_coordinate(index-1)
+	var path_commands = get_path_line_commands()
+	if (path_commands.size() == index):
+		remove_last_command()
+		remove_last_command()
+		add_point(new_pos)

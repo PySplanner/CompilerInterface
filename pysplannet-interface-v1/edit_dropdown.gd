@@ -2,6 +2,7 @@ extends MenuButton
 
 @onready var SaveManager = %save_manager
 @onready var PathManager = %PathManager
+@onready var mapScale = %mapScale
 var config_window: Window
 
 func _ready():
@@ -9,6 +10,8 @@ func _ready():
 #================[ menu itens }=====================
 	popup.add_item("undo")
 	popup.add_item("redo")
+	popup.add_separator()
+	popup.add_item("set map scale")
 	popup.add_separator()
 	popup.add_item("project settings")
 
@@ -34,6 +37,9 @@ func _on_menu_item_selected(id: int):
 		"project settings":
 			config_window.popup_centered()  # Opens it centered on screen
 			config_window.show()
+		
+		"set map scale":
+			mapScale.set_map_scale()
 
 		_:
 			print("❓ Unknown menu option:", label)
